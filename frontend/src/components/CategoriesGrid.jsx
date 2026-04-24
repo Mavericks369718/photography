@@ -3,10 +3,10 @@ import { categories } from "../mock";
 
 function Badge({ label }) {
   if (!label) return null;
-  const color = label === "Trending" ? "bg-rose-800" : "bg-rose-700";
+  const color = label === "Trending" ? "bg-[#8B1538]" : "bg-[#A11D44]";
   return (
     <span
-      className={`absolute top-0 left-0 ${color} text-white text-[11px] font-semibold px-2.5 py-1 rounded-tl-2xl rounded-br-2xl shadow`}
+      className={`absolute top-0 left-0 ${color} text-white text-[10px] font-semibold px-2 py-0.5 rounded-tl-2xl rounded-br-xl shadow`}
     >
       {label}
     </span>
@@ -22,10 +22,9 @@ function CategoryCard({ cat }) {
           alt={cat.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-pink-200/20 to-transparent" />
         <Badge label={cat.badge} />
       </div>
-      <p className="mt-2.5 text-[14px] font-semibold leading-tight text-neutral-900 whitespace-pre-line">
+      <p className="mt-2 text-[12.5px] font-semibold leading-[1.15] text-neutral-900 whitespace-pre-line tracking-tight">
         {cat.title}
       </p>
     </button>
@@ -33,16 +32,15 @@ function CategoryCard({ cat }) {
 }
 
 export default function CategoriesGrid() {
-  // Use only square cards in a 3-column grid
   const list = categories.filter((c) => !c.wide);
 
   return (
     <section className="px-5 pb-8">
-      <h2 className="text-[22px] font-bold text-neutral-900 mb-4 tracking-tight">
+      <h2 className="text-[22px] font-extrabold text-neutral-900 mb-4 tracking-[-0.02em]">
         Explore Our Categories
       </h2>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-4 gap-2.5">
         {list.map((cat) => (
           <CategoryCard key={cat.id} cat={cat} />
         ))}
