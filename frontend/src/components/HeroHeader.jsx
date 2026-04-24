@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MapPin, ChevronDown, Search, SlidersHorizontal } from "lucide-react";
+import { MapPin, ChevronDown, Search } from "lucide-react";
 import { locationData, heroBanners, searchPlaceholders } from "../mock";
 
 export default function HeroHeader() {
@@ -10,7 +10,7 @@ export default function HeroHeader() {
   useEffect(() => {
     const id = setInterval(() => {
       setActive((p) => (p + 1) % heroBanners.length);
-    }, 5000);
+    }, 5500);
     return () => clearInterval(id);
   }, []);
 
@@ -23,12 +23,12 @@ export default function HeroHeader() {
 
   return (
     <div className="relative w-full">
-      {/* Full-bleed banner background */}
-      <div className="relative h-[380px] w-full overflow-hidden">
+      <div className="relative h-[420px] w-full overflow-hidden">
+        {/* Banner image layers */}
         {heroBanners.map((b, i) => (
           <div
             key={b.id}
-            className={`absolute inset-0 transition-opacity duration-[900ms] ease-out ${
+            className={`absolute inset-0 transition-opacity duration-[1000ms] ease-out ${
               i === active ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -37,33 +37,39 @@ export default function HeroHeader() {
               alt={b.title}
               className="absolute inset-0 h-full w-full object-cover"
             />
-            {/* Subtle dark overlay to make top content readable */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/45" />
           </div>
         ))}
 
+        {/* Very subtle top gradient ONLY for location text readability */}
+        <div className="pointer-events-none absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-black/40 via-black/10 to-transparent" />
+
+        {/* Soft bottom fade into content */}
+        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/25 to-transparent" />
+
         {/* Foreground content */}
-        <div className="relative z-10 flex h-full flex-col px-5 pt-5 pb-0">
-          {/* Location row */}
-          <button className="flex flex-col items-start text-left group self-start">
+        <div className="relative z-10 flex h-full flex-col px-5 pt-5">
+          {/* Location */}
+          <button className="flex flex-col items-start text-left self-start">
             <div className="flex items-center gap-1.5">
               <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-pink-500 shadow-md">
                 <MapPin className="h-3 w-3 text-white" strokeWidth={2.5} />
               </span>
-              <span className="text-[19px] font-bold text-white tracking-tight drop-shadow-sm">
+              <span className="text-[19px] font-bold text-white tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]">
                 {locationData.country}
               </span>
-              <ChevronDown className="h-4 w-4 text-white/90" />
+              <ChevronDown className="h-4 w-4 text-white/95" />
             </div>
-            <span className="ml-7 mt-0.5 text-[12px] text-white/80 font-medium">
+            <span className="ml-7 mt-0.5 text-[12px] text-white/90 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
               {locationData.city}
             </span>
           </button>
 
-          {/* Search bar - floating on banner */}
-          <div className="mt-4">
-            <div className="flex items-center gap-2 rounded-2xl bg-white shadow-[0_10px_30px_rgba(0,0,0,0.25)] ring-1 ring-black/5 px-4 py-3.5">
-              <Search className="h-5 w-5 text-neutral-500 shrink-0" strokeWidth={2} />
+          {/* Pill-shaped search bar - clean & floating */}
+          <div className="mt-5">
+            <div className="flex items-center gap-2.5 rounded-full bg-white shadow-[0_6px_18px_rgba(0,0,0,0.18)] ring-1 ring-black/5 pl-2 pr-5 py-2">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full ring-1 ring-neutral-200 bg-white">
+                <Search className="h-4 w-4 text-neutral-500" strokeWidth={2.2} />
+              </span>
               <div className="flex-1 relative overflow-hidden h-6">
                 <input
                   value={query}
@@ -76,49 +82,39 @@ export default function HeroHeader() {
                     <span className="text-[15px] text-neutral-400">Search for&nbsp;</span>
                     <span
                       key={phIndex}
-                      className="text-[15px] text-neutral-800 font-medium animate-[fadeUp_0.4s_ease]"
+                      className="text-[15px] text-neutral-500 animate-[fadeUp_0.4s_ease]"
                     >
                       &lsquo;{searchPlaceholders[phIndex]}&rsquo;
                     </span>
                   </div>
                 )}
               </div>
-              <button className="h-8 w-8 rounded-xl bg-neutral-100 hover:bg-neutral-200 transition-colors flex items-center justify-center">
-                <SlidersHorizontal className="h-4 w-4 text-neutral-700" />
-              </button>
             </div>
           </div>
 
-          {/* Banner copy */}
-          <div className="mt-auto pb-10 relative">
-            {heroBanners.map((b, i) => (
-              <div
-                key={b.id}
-                className={`${
-                  i === active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 absolute inset-x-5 bottom-10"
-                } transition-all duration-500`}
-              >
-                {i === active && (
-                  <>
-                    <p className="text-white/85 text-[12px] font-medium tracking-[0.18em] uppercase">
-                      Featured
-                    </p>
-                    <h2 className="text-white text-[30px] font-extrabold leading-[1.05] mt-1 drop-shadow-md">
-                      {b.title}
-                    </h2>
-                    <p className="text-rose-200 text-[20px] font-semibold leading-tight mt-0.5">
-                      {b.subtitle}
-                    </p>
-                    <button className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white text-neutral-900 px-4 py-2 text-[13px] font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                      {b.cta}
-                    </button>
-                  </>
-                )}
-              </div>
-            ))}
+          {/* Banner text + CTA anchored at bottom (subtle, doesn't cover image) */}
+          <div className="mt-auto pb-10">
+            {heroBanners.map((b, i) =>
+              i === active ? (
+                <div key={b.id} className="animate-[fadeUp_0.5s_ease]">
+                  <p className="text-white/90 text-[11px] font-semibold tracking-[0.2em] uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+                    Featured
+                  </p>
+                  <h2 className="text-white text-[26px] font-extrabold leading-[1.05] mt-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
+                    {b.title}
+                  </h2>
+                  <p className="text-rose-200 text-[17px] font-semibold leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
+                    {b.subtitle}
+                  </p>
+                  <button className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-white text-neutral-900 px-4 py-1.5 text-[12.5px] font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                    {b.cta}
+                  </button>
+                </div>
+              ) : null
+            )}
           </div>
 
-          {/* Dots */}
+          {/* Carousel dots */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
             {heroBanners.map((_, i) => (
               <button
@@ -133,8 +129,8 @@ export default function HeroHeader() {
         </div>
       </div>
 
-      {/* Seamless transition - curved white into content */}
-      <div className="relative -mt-6 h-6 bg-white rounded-t-[28px] shadow-[0_-10px_30px_rgba(0,0,0,0.08)]" />
+      {/* Seamless curved transition into white content */}
+      <div className="relative -mt-5 h-5 bg-white rounded-t-[28px]" />
 
       <style>{`
         @keyframes fadeUp {
