@@ -117,24 +117,10 @@ export const categories = [
     wide: false
   },
   {
-    id: "food",
-    title: "Food\nPhotography",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80",
-    badge: null,
-    wide: false
-  },
-  {
     id: "realestate",
     title: "Real Estate\n& Interior",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80",
     badge: "New",
-    wide: false
-  },
-  {
-    id: "travel",
-    title: "Travel &\nLifestyle",
-    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80",
-    badge: null,
     wide: false
   }
 ];
