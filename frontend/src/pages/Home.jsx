@@ -27,7 +27,7 @@ export default function Home() {
             </span>
             <div className="flex-1">
               <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
-                Become a Click Madam Pro
+                Become a CorporateMoments Pro
               </p>
               <p className="text-[12px] text-neutral-600 mt-0.5">
                 Join 1,200+ photographers earning on their schedule
