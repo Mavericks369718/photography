@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import HeroHeader from "../components/HeroHeader";
-import UserTypeToggle from "../components/UserTypeToggle";
 import CategoriesGrid from "../components/CategoriesGrid";
 import MostBooked from "../components/MostBooked";
 import OffersStrip from "../components/OffersStrip";
@@ -9,7 +8,6 @@ import BottomNav from "../components/BottomNav";
 import { Camera } from "lucide-react";
 
 export default function Home() {
-  const [type, setType] = useState("personal");
   const [nav, setNav] = useState("home");
 
   return (
@@ -17,9 +15,7 @@ export default function Home() {
       <div className="relative w-full max-w-[480px] bg-white min-h-screen shadow-xl overflow-hidden">
         <HeroHeader />
 
-        <div className="pt-3">
-          <UserTypeToggle active={type} onChange={setType} />
-        </div>
+        <div className="pt-4" />
 
         <CategoriesGrid />
         <MostBooked />

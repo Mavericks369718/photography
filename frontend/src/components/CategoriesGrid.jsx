@@ -16,9 +16,7 @@ function Badge({ label }) {
 function CategoryCard({ cat }) {
   return (
     <button className="group flex flex-col items-start text-left">
-      <div
-        className={`relative ${cat.wide ? "aspect-[2.1/1]" : "aspect-square"} w-full overflow-hidden rounded-2xl bg-[#F8D7D9] ring-1 ring-black/5 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-0.5`}
-      >
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-[#F8D7D9] ring-1 ring-black/5 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-0.5">
         <img
           src={cat.image}
           alt={cat.title}
@@ -35,9 +33,8 @@ function CategoryCard({ cat }) {
 }
 
 export default function CategoriesGrid() {
-  // first row: 2 square + 1 wide
-  const firstRow = categories.slice(0, 3);
-  const rest = categories.slice(3);
+  // Use only square cards in a 3-column grid
+  const list = categories.filter((c) => !c.wide);
 
   return (
     <section className="px-5 pb-8">
@@ -45,20 +42,8 @@ export default function CategoriesGrid() {
         Explore Our Categories
       </h2>
 
-      <div className="grid grid-cols-4 gap-3 mb-3">
-        <div className="col-span-1">
-          <CategoryCard cat={firstRow[0]} />
-        </div>
-        <div className="col-span-1">
-          <CategoryCard cat={firstRow[1]} />
-        </div>
-        <div className="col-span-2">
-          <CategoryCard cat={firstRow[2]} />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-4 gap-3">
-        {rest.map((cat) => (
+      <div className="grid grid-cols-3 gap-3">
+        {list.map((cat) => (
           <CategoryCard key={cat.id} cat={cat} />
         ))}
       </div>
