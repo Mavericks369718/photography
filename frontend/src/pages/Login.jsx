@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Star, ShieldCheck, Users } from "lucide-react";
 import { toast } from "sonner";
 
 const HERO = "https://images.unsplash.com/photo-1554080353-a576cf803bda?w=1400&q=85";
@@ -57,12 +57,13 @@ export default function Login() {
   return (
     <div className="min-h-screen w-full bg-neutral-100 flex justify-center">
       <div className="relative w-full max-w-[480px] min-h-screen bg-[#FFF1EC] flex flex-col">
-        {/* Hero photograph — like Home HeroHeader */}
-        <div className="relative h-[280px] w-full overflow-hidden">
-          <img src={HERO} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/50" />
+        {/* Bigger cinematic hero — 55% of viewport */}
+        <div className="relative h-[54vh] min-h-[440px] w-full overflow-hidden">
+          <img src={HERO} alt="" className="absolute inset-0 h-full w-full object-cover scale-[1.03]" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/70" />
 
-          <div className="relative z-10 px-6 pt-6 flex items-center justify-between">
+          {/* Top bar */}
+          <div className="absolute top-0 left-0 right-0 z-10 px-6 pt-6 flex items-center justify-between">
             {step === "otp" ? (
               <button
                 onClick={() => setStep("phone")}
@@ -75,30 +76,31 @@ export default function Login() {
                 Corporate<span className="text-rose-300">Moments</span>
               </span>
             )}
-            <span className="text-[10px] font-medium tracking-[0.25em] uppercase text-white/80">
-              Est. 2025
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur ring-1 ring-white/25 px-2.5 py-1 text-[10px] font-semibold tracking-[0.2em] uppercase text-white">
+              <ShieldCheck className="h-3 w-3" /> Secure
             </span>
           </div>
 
-          <div className="absolute z-10 bottom-0 left-0 right-0 px-6 pb-8">
-            <p className="text-white/85 text-[11px] font-semibold tracking-[0.24em] uppercase">
+          {/* Hero copy at bottom */}
+          <div className="absolute z-10 bottom-0 left-0 right-0 px-6 pb-10">
+            <span className="inline-block text-white/85 text-[11px] font-semibold tracking-[0.24em] uppercase">
               {step === "phone" ? "Sign in" : "Verify"}
-            </p>
-            <h1 className="mt-2 text-white text-[30px] font-extrabold leading-[1.05] tracking-[-0.025em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
-              {step === "phone" ? (<>Your moments,<br />booked in minutes.</>) : (<>Enter the<br />6-digit code.</>)}
+            </span>
+            <h1 className="mt-2.5 text-white text-[38px] leading-[1.02] tracking-[-0.025em] drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]" style={{fontWeight:800}}>
+              {step === "phone" ? (
+                <>Your <span style={{fontFamily:"'Fraunces',serif",fontWeight:500,fontStyle:"italic"}} className="text-rose-200">moments,</span><br/>booked in minutes.</>
+              ) : (
+                <>Enter the<br/><span style={{fontFamily:"'Fraunces',serif",fontWeight:500,fontStyle:"italic"}} className="text-rose-200">6-digit</span> code.</>
+              )}
             </h1>
           </div>
         </div>
 
-        {/* Curved white content area — same device as Home */}
-        <div className="relative -mt-5 flex-1 bg-white rounded-t-[28px] px-6 pt-7 pb-8 flex flex-col shadow-[0_-10px_30px_rgba(0,0,0,0.06)]">
+        {/* Curved white content card */}
+        <div className="relative -mt-6 flex-1 bg-white rounded-t-[28px] px-6 pt-6 pb-7 flex flex-col shadow-[0_-10px_30px_rgba(0,0,0,0.08)]">
           {step === "phone" ? (
             <>
-              <p className="text-[13.5px] text-neutral-500 leading-relaxed">
-                We&rsquo;ll send a one-time code to verify your mobile number.
-              </p>
-
-              <div className="mt-6 rounded-2xl bg-[#FFF7F3] ring-1 ring-rose-100 p-5">
+              <div className="rounded-2xl bg-[#FFF7F3] ring-1 ring-rose-100 p-5">
                 <label className="text-[10.5px] font-semibold text-neutral-500 uppercase tracking-[0.22em]">
                   Mobile number
                 </label>
@@ -120,7 +122,7 @@ export default function Login() {
               <button
                 disabled={!phoneValid}
                 onClick={sendOtp}
-                className={`mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full py-[17px] text-[14.5px] font-bold transition-all ${
+                className={`mt-5 w-full inline-flex items-center justify-center gap-2 rounded-full py-[17px] text-[14.5px] font-bold transition-all ${
                   phoneValid
                     ? "bg-rose-800 text-white shadow-[0_10px_24px_rgba(159,18,57,0.25)] hover:bg-rose-900 hover:-translate-y-0.5"
                     : "bg-neutral-100 text-neutral-400 cursor-not-allowed"
@@ -130,17 +132,37 @@ export default function Login() {
                 {phoneValid && <ArrowRight className="h-4 w-4" />}
               </button>
 
-              <p className="mt-auto pt-6 text-center text-[11px] text-neutral-400">
-                By continuing you agree to our <span className="font-semibold text-neutral-600">Terms</span> &amp; <span className="font-semibold text-neutral-600">Privacy</span>.
-              </p>
+              {/* Trust strip fills the bottom beautifully */}
+              <div className="mt-auto">
+                <div className="flex items-center justify-around rounded-2xl bg-neutral-50 ring-1 ring-neutral-100 py-3 px-3">
+                  <div className="flex items-center gap-1.5">
+                    <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                    <span className="text-[12.5px] font-bold text-neutral-900">4.9</span>
+                    <span className="text-[11px] text-neutral-500">rated</span>
+                  </div>
+                  <span className="h-4 w-px bg-neutral-200" />
+                  <div className="flex items-center gap-1.5">
+                    <Users className="h-3.5 w-3.5 text-neutral-700" />
+                    <span className="text-[12.5px] font-bold text-neutral-900">50K+</span>
+                    <span className="text-[11px] text-neutral-500">clients</span>
+                  </div>
+                  <span className="h-4 w-px bg-neutral-200" />
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                    <span className="text-[12.5px] font-bold text-neutral-900">Verified</span>
+                  </div>
+                </div>
+                <p className="mt-3 text-center text-[11px] text-neutral-400">
+                  By continuing you agree to our <span className="font-semibold text-neutral-600">Terms</span> &amp; <span className="font-semibold text-neutral-600">Privacy</span>.
+                </p>
+              </div>
             </>
           ) : (
             <>
               <p className="text-[13.5px] text-neutral-500 leading-relaxed">
                 Sent to <span className="font-bold text-neutral-900">+91 {phone}</span>
               </p>
-
-              <div className="mt-6 grid grid-cols-6 gap-2" onPaste={handlePaste}>
+              <div className="mt-4 grid grid-cols-6 gap-2" onPaste={handlePaste}>
                 {otp.map((d, i) => (
                   <input
                     key={i}
@@ -156,7 +178,6 @@ export default function Login() {
                   />
                 ))}
               </div>
-
               <div className="mt-5 text-[13px] text-neutral-500">
                 Didn&rsquo;t receive it?{" "}
                 <button
@@ -167,11 +188,10 @@ export default function Login() {
                   {timer > 0 ? `Resend in ${timer}s` : "Resend"}
                 </button>
               </div>
-
               <button
                 disabled={otp.join("").length !== 6}
                 onClick={verify}
-                className={`mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full py-[17px] text-[14.5px] font-bold transition-all ${
+                className={`mt-5 w-full inline-flex items-center justify-center gap-2 rounded-full py-[17px] text-[14.5px] font-bold transition-all ${
                   otp.join("").length === 6
                     ? "bg-rose-800 text-white shadow-[0_10px_24px_rgba(159,18,57,0.25)] hover:bg-rose-900 hover:-translate-y-0.5"
                     : "bg-neutral-100 text-neutral-400 cursor-not-allowed"
@@ -180,6 +200,9 @@ export default function Login() {
                 Verify
                 {otp.join("").length === 6 && <ArrowRight className="h-4 w-4" />}
               </button>
+              <p className="mt-auto pt-6 text-center text-[11.5px] text-neutral-400">
+                Code valid for 5 minutes · Never share with anyone
+              </p>
             </>
           )}
         </div>
