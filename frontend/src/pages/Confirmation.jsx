@@ -45,21 +45,39 @@ export default function Confirmation() {
   return (
     <div className="min-h-screen w-full bg-neutral-100 flex justify-center">
       <div className="relative w-full max-w-[480px] min-h-screen bg-[#FFF1EC] flex flex-col pb-28">
-        {/* success burst */}
-        <div className="relative px-6 pt-14 pb-10 text-center">
-          <div className="relative mx-auto h-24 w-24">
-            <span className="absolute inset-0 rounded-full bg-emerald-100 animate-[ping_1.4s_ease-out_1]"/>
-            <span className="relative h-24 w-24 rounded-full bg-emerald-500 flex items-center justify-center shadow-[0_12px_30px_rgba(16,185,129,0.35)] ring-8 ring-emerald-100">
-              <Check className="h-12 w-12 text-white" strokeWidth={3}/>
+        {/* Emerald success hero */}
+        <div className="relative h-[300px] w-full overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600">
+          <img src={data.package.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-overlay"/>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/15 via-black/5 to-black/50"/>
+          <div className="absolute top-0 left-0 right-0 z-10 px-5 pt-6 flex items-center justify-between">
+            <span className="text-[12px] font-semibold tracking-[0.26em] uppercase text-white drop-shadow">
+              Corporate<span className="text-emerald-200">Moments</span>
             </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur ring-1 ring-white/25 px-2.5 py-1 text-[10px] font-semibold tracking-[0.22em] uppercase text-white">Step 3 / 3</span>
           </div>
-          <p className="mt-6 text-[11px] font-semibold tracking-[0.28em] uppercase text-emerald-700">Booking confirmed</p>
-          <h1 className="mt-2 text-[28px] font-extrabold text-neutral-900 leading-[1.1] tracking-[-0.02em]">You&rsquo;re all set.</h1>
-          <p className="mt-2 text-[13.5px] text-neutral-500 leading-relaxed">A confirmation has been sent to your mobile.<br/>We&rsquo;ll reach out 24 hrs before the shoot.</p>
+
+          <div className="absolute z-10 inset-0 flex flex-col items-center justify-center pt-4 pb-8">
+            <div className="relative h-20 w-20">
+              <span className="absolute inset-0 rounded-full bg-white/25 animate-[ping_1.6s_ease-out_1]"/>
+              <span className="relative h-20 w-20 rounded-full bg-white flex items-center justify-center shadow-[0_12px_30px_rgba(0,0,0,0.25)]">
+                <Check className="h-10 w-10 text-emerald-600" strokeWidth={3}/>
+              </span>
+            </div>
+            <span className="mt-4 text-white/90 text-[11px] font-semibold tracking-[0.28em] uppercase">Booking confirmed</span>
+            <h1 className="mt-1.5 text-white text-[32px] leading-[1.02] tracking-[-0.025em] drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] text-center px-6" style={{fontWeight:800}}>
+              You&rsquo;re <span style={{fontFamily:"'Fraunces',serif",fontWeight:500,fontStyle:"italic"}} className="text-emerald-100">all set.</span>
+            </h1>
+          </div>
         </div>
 
+        {/* Curved white card */}
+        <div className="relative -mt-5 bg-white rounded-t-[28px] px-5 pt-6 pb-6 shadow-[0_-10px_30px_rgba(0,0,0,0.06)] flex-1">
+          <p className="text-center text-[13px] text-neutral-500 leading-relaxed mb-5">
+            A confirmation has been sent to your mobile.<br/>We&rsquo;ll reach out 24 hrs before the shoot.
+          </p>
+
         {/* Ticket card */}
-        <div className="mx-5 rounded-3xl bg-white ring-1 ring-neutral-200 shadow-[0_10px_30px_rgba(0,0,0,0.06)] overflow-hidden">
+        <div className="rounded-3xl bg-[#FFF7F3] ring-1 ring-rose-100 overflow-hidden">
           {/* perforated notches */}
           <div className="relative">
             <span className="absolute -left-3 top-full h-6 w-6 rounded-full bg-[#FFF1EC]"/>
@@ -99,7 +117,7 @@ export default function Confirmation() {
         </div>
 
         {/* Actions */}
-        <div className="px-5 pt-6 grid grid-cols-2 gap-2">
+        <div className="pt-5 grid grid-cols-2 gap-2">
           <button onClick={()=>{navigator.clipboard?.writeText(data.ref); toast.success("Reference copied");}}
             className="rounded-2xl bg-white ring-1 ring-neutral-200 py-3 text-[13px] font-bold text-neutral-800 inline-flex items-center justify-center gap-1.5 hover:bg-neutral-50 transition">
             <Copy className="h-4 w-4"/> Copy ref
@@ -108,6 +126,7 @@ export default function Confirmation() {
             className="rounded-2xl bg-white ring-1 ring-neutral-200 py-3 text-[13px] font-bold text-neutral-800 inline-flex items-center justify-center gap-1.5 hover:bg-neutral-50 transition">
             <Download className="h-4 w-4"/> Download receipt
           </button>
+        </div>
         </div>
 
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/95 backdrop-blur border-t border-neutral-200 px-5 py-3.5 z-40">

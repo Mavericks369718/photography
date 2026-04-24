@@ -61,17 +61,29 @@ export default function Booking() {
   return (
     <div className="min-h-screen w-full bg-neutral-100 flex justify-center">
       <div className="relative w-full max-w-[480px] min-h-screen bg-[#FFF1EC] flex flex-col pb-28">
-        {/* Header */}
-        <div className="px-5 pt-6 pb-4 flex items-center justify-between">
-          <button onClick={()=>navigate(-1)} className="h-10 w-10 -ml-2 rounded-full bg-white ring-1 ring-neutral-200 shadow-sm flex items-center justify-center hover:bg-neutral-50 transition">
-            <ArrowLeft className="h-4 w-4 text-neutral-900" strokeWidth={2.2}/>
-          </button>
-          <StepBar step={1}/>
-          <div className="w-10"/>
+        {/* Cinematic hero matching Login/Onboarding */}
+        <div className="relative h-[260px] w-full overflow-hidden">
+          <img src={PACKAGE.image} alt="" className="absolute inset-0 h-full w-full object-cover scale-[1.03]"/>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-black/70"/>
+          <div className="absolute top-0 left-0 right-0 z-10 px-5 pt-6 flex items-center justify-between">
+            <button onClick={()=>navigate(-1)} className="h-10 w-10 -ml-2 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-sm hover:bg-white transition">
+              <ArrowLeft className="h-4 w-4 text-neutral-900" strokeWidth={2.2}/>
+            </button>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur ring-1 ring-white/25 px-2.5 py-1 text-[10px] font-semibold tracking-[0.22em] uppercase text-white">Step 1 / 3</span>
+          </div>
+          <div className="absolute z-10 bottom-0 left-0 right-0 px-6 pb-6">
+            <span className="text-white/85 text-[11px] font-semibold tracking-[0.24em] uppercase">Schedule</span>
+            <h1 className="mt-1.5 text-white text-[30px] leading-[1.02] tracking-[-0.025em] drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]" style={{fontWeight:800}}>
+              Pick a <span style={{fontFamily:"'Fraunces',serif",fontWeight:500,fontStyle:"italic"}} className="text-rose-200">date &amp; time.</span>
+            </h1>
+          </div>
         </div>
 
+        {/* Curved white card */}
+        <div className="relative -mt-5 bg-white rounded-t-[28px] px-5 pt-5 pb-6 shadow-[0_-10px_30px_rgba(0,0,0,0.06)] flex-1">
+
         {/* Package card */}
-        <div className="mx-5 rounded-2xl bg-white ring-1 ring-neutral-200 shadow-[0_6px_18px_rgba(0,0,0,0.04)] p-3 flex gap-3">
+        <div className="rounded-2xl bg-[#FFF7F3] ring-1 ring-rose-100 p-3 flex gap-3">
           <div className="h-16 w-16 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
             <img src={PACKAGE.image} alt="" className="h-full w-full object-cover"/>
           </div>
@@ -86,13 +98,13 @@ export default function Booking() {
         </div>
 
         {/* Heading */}
-        <div className="px-5 pt-6 pb-3">
-          <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-rose-700">Schedule</p>
-          <h1 className="mt-1.5 text-[26px] font-extrabold text-neutral-900 leading-[1.1] tracking-[-0.02em]">Pick a date &amp; time</h1>
+        <div className="pt-5 pb-3">
+          <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-rose-700">Calendar</p>
+          <h2 className="mt-1 text-[18px] font-extrabold text-neutral-900 tracking-[-0.015em]">Select your date</h2>
         </div>
 
         {/* Calendar */}
-        <div className="mx-5 rounded-2xl bg-white ring-1 ring-neutral-200 shadow-[0_6px_18px_rgba(0,0,0,0.04)] p-4">
+        <div className="rounded-2xl bg-white ring-1 ring-neutral-200 shadow-[0_6px_18px_rgba(0,0,0,0.04)] p-4">
           <div className="flex items-center justify-between mb-3">
             <button onClick={()=>setMonth(new Date(month.getFullYear(), month.getMonth()-1, 1))} className="h-8 w-8 rounded-full hover:bg-neutral-100 flex items-center justify-center">
               <ChevronLeft className="h-4 w-4 text-neutral-700"/>
@@ -132,11 +144,11 @@ export default function Booking() {
         </div>
 
         {/* Time slots */}
-        <div className="px-5 pt-6 pb-3">
+        <div className="pt-6 pb-3">
           <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-rose-700">Time slot</p>
-          <h2 className="mt-1.5 text-[18px] font-bold text-neutral-900">Preferred start time</h2>
+          <h2 className="mt-1 text-[18px] font-extrabold text-neutral-900 tracking-[-0.015em]">Preferred start time</h2>
         </div>
-        <div className="mx-5 grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {TIME_SLOTS.map(t=>{
             const sel = selectedTime === t;
             return (
@@ -146,6 +158,7 @@ export default function Booking() {
               </button>
             );
           })}
+        </div>
         </div>
 
         {/* Sticky running cost */}

@@ -61,21 +61,27 @@ export default function Payment() {
   return (
     <div className="min-h-screen w-full bg-neutral-100 flex justify-center">
       <div className="relative w-full max-w-[480px] min-h-screen bg-[#FFF1EC] flex flex-col pb-28">
-        <div className="px-5 pt-6 pb-4 flex items-center justify-between">
-          <button onClick={()=>navigate(-1)} className="h-10 w-10 -ml-2 rounded-full bg-white ring-1 ring-neutral-200 shadow-sm flex items-center justify-center">
-            <ArrowLeft className="h-4 w-4 text-neutral-900" strokeWidth={2.2}/>
-          </button>
-          <StepBar step={2}/>
-          <div className="w-10"/>
+        <div className="relative h-[230px] w-full overflow-hidden">
+          <img src={booking.package.image} alt="" className="absolute inset-0 h-full w-full object-cover scale-[1.03]"/>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-black/70"/>
+          <div className="absolute top-0 left-0 right-0 z-10 px-5 pt-6 flex items-center justify-between">
+            <button onClick={()=>navigate(-1)} className="h-10 w-10 -ml-2 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-sm hover:bg-white transition">
+              <ArrowLeft className="h-4 w-4 text-neutral-900" strokeWidth={2.2}/>
+            </button>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur ring-1 ring-white/25 px-2.5 py-1 text-[10px] font-semibold tracking-[0.22em] uppercase text-white">Step 2 / 3</span>
+          </div>
+          <div className="absolute z-10 bottom-0 left-0 right-0 px-6 pb-6">
+            <span className="text-white/85 text-[11px] font-semibold tracking-[0.24em] uppercase">Checkout</span>
+            <h1 className="mt-1.5 text-white text-[30px] leading-[1.02] tracking-[-0.025em] drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]" style={{fontWeight:800}}>
+              Review &amp; <span style={{fontFamily:"'Fraunces',serif",fontWeight:500,fontStyle:"italic"}} className="text-rose-200">pay.</span>
+            </h1>
+          </div>
         </div>
 
-        <div className="px-5 pt-2 pb-3">
-          <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-rose-700">Checkout</p>
-          <h1 className="mt-1.5 text-[26px] font-extrabold text-neutral-900 leading-[1.1] tracking-[-0.02em]">Review &amp; pay</h1>
-        </div>
+        <div className="relative -mt-5 bg-white rounded-t-[28px] px-5 pt-5 pb-6 shadow-[0_-10px_30px_rgba(0,0,0,0.06)] flex-1">
 
         {/* Summary */}
-        <div className="mx-5 rounded-2xl bg-white ring-1 ring-neutral-200 shadow-[0_6px_18px_rgba(0,0,0,0.04)] p-5">
+        <div className="rounded-2xl bg-[#FFF7F3] ring-1 ring-rose-100 p-5">
           <div className="flex gap-3">
             <div className="h-16 w-16 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
               <img src={booking.package.image} alt="" className="h-full w-full object-cover"/>
@@ -99,7 +105,7 @@ export default function Payment() {
         </div>
 
         {/* Payment mode switch */}
-        <div className="mx-5 mt-5">
+        <div className="mt-5">
           <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-rose-700 mb-3">Payment</p>
           <div className="grid grid-cols-2 gap-2">
             <ModeBtn active={mode==="online"} onClick={()=>setMode("online")} label="Pay Online" sub="Secure · Instant" Icon={ShieldCheck}/>
@@ -108,7 +114,7 @@ export default function Payment() {
         </div>
 
         {mode === "online" ? (
-          <div className="mx-5 mt-4 rounded-2xl bg-white ring-1 ring-neutral-200 overflow-hidden">
+          <div className="mt-4 rounded-2xl bg-white ring-1 ring-neutral-200 overflow-hidden">
             <div className="px-4 py-3 bg-neutral-50 flex items-center gap-2 border-b border-neutral-200">
               <Lock className="h-3.5 w-3.5 text-neutral-500"/>
               <span className="text-[11.5px] font-semibold text-neutral-600 tracking-wide">Razorpay secure gateway</span>
@@ -133,7 +139,7 @@ export default function Payment() {
             })}
           </div>
         ) : (
-          <div className="mx-5 mt-4 rounded-2xl bg-amber-50 ring-1 ring-amber-200 p-4 flex gap-3">
+          <div className="mt-4 rounded-2xl bg-amber-50 ring-1 ring-amber-200 p-4 flex gap-3">
             <Banknote className="h-5 w-5 text-amber-700 shrink-0 mt-0.5"/>
             <div>
               <p className="text-[13.5px] font-bold text-amber-900">Pay cash on the shoot day</p>
@@ -142,7 +148,8 @@ export default function Payment() {
           </div>
         )}
 
-        {err && <p className="mx-5 mt-3 text-[12px] text-red-600 font-semibold">{err}</p>}
+        {err && <p className="mt-3 text-[12px] text-red-600 font-semibold">{err}</p>}
+        </div>
 
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/95 backdrop-blur border-t border-neutral-200 px-5 py-3.5 z-40">
           <button onClick={confirm} disabled={processing}
