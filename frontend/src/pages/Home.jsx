@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import HeroHeader from "../components/HeroHeader";
 import CategoriesGrid from "../components/CategoriesGrid";
 import MostBooked from "../components/MostBooked";
 import OffersStrip from "../components/OffersStrip";
 import Testimonials from "../components/Testimonials";
-import BottomNav from "../components/BottomNav";
 import { Camera } from "lucide-react";
 
 export default function Home() {
-  const [nav, setNav] = useState("home");
-
   return (
     <div className="min-h-screen w-full bg-neutral-100 flex justify-center">
       <div className="relative w-full max-w-[480px] bg-white min-h-screen shadow-xl overflow-hidden">
@@ -41,8 +38,6 @@ export default function Home() {
             </button>
           </div>
         </div>
-
-        <BottomNav active={nav} onChange={setNav} />
       </div>
     </div>
   );
