@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import TopHeader from "../components/TopHeader";
-import SearchBar from "../components/SearchBar";
-import HeroBanner from "../components/HeroBanner";
+import HeroHeader from "../components/HeroHeader";
 import UserTypeToggle from "../components/UserTypeToggle";
 import CategoriesGrid from "../components/CategoriesGrid";
 import MostBooked from "../components/MostBooked";
@@ -16,19 +14,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen w-full bg-neutral-100 flex justify-center">
-      {/* phone-like container */}
-      <div className="relative w-full max-w-[480px] bg-white min-h-screen shadow-xl">
-        {/* Pink top scope */}
-        <div className="bg-[#FFF1EC]">
-          <TopHeader />
-          <SearchBar />
+      <div className="relative w-full max-w-[480px] bg-white min-h-screen shadow-xl overflow-hidden">
+        <HeroHeader />
+
+        <div className="pt-3">
+          <UserTypeToggle active={type} onChange={setType} />
         </div>
 
-        <div className="pt-5">
-          <HeroBanner />
-        </div>
-
-        <UserTypeToggle active={type} onChange={setType} />
         <CategoriesGrid />
         <MostBooked />
         <OffersStrip />
