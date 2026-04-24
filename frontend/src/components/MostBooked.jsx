@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { mostBookedTabs, mostBookedServices } from "../mock";
 import { Star, Clock, MapPin } from "lucide-react";
 
 function ServiceCard({ s }) {
+  const navigate = useNavigate();
   const discount = Math.round(((s.originalPrice - s.price) / s.originalPrice) * 100);
   return (
     <div className="min-w-[260px] max-w-[260px] snap-start rounded-2xl bg-white ring-1 ring-neutral-200 shadow-[0_4px_16px_rgba(0,0,0,0.04)] overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all">
@@ -35,7 +37,7 @@ function ServiceCard({ s }) {
               ₹{s.originalPrice.toLocaleString()}
             </span>
           </div>
-          <button className="text-[12px] font-semibold text-rose-700 hover:text-rose-800">
+          <button onClick={() => navigate("/booking")} className="text-[12px] font-semibold text-rose-700 hover:text-rose-800">
             Book →
           </button>
         </div>
@@ -45,6 +47,7 @@ function ServiceCard({ s }) {
 }
 
 export default function MostBooked() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState(mostBookedTabs[0]);
   const list = mostBookedServices[tab] || [];
 

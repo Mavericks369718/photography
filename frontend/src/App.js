@@ -4,6 +4,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
+import Booking from "./pages/Booking";
+import Payment from "./pages/Payment";
+import Confirmation from "./pages/Confirmation";
 import { Toaster } from "sonner";
 
 function RequireAuth({ children }) {
@@ -21,14 +24,10 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/onboarding" element={<Onboarding />} />
-          <Route
-            path="/"
-            element={
-              <RequireAuth>
-                <Home />
-              </RequireAuth>
-            }
-          />
+          <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+          <Route path="/booking" element={<RequireAuth><Booking /></RequireAuth>} />
+          <Route path="/payment" element={<RequireAuth><Payment /></RequireAuth>} />
+          <Route path="/confirmation" element={<RequireAuth><Confirmation /></RequireAuth>} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" richColors offset={16} />
