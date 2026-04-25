@@ -21,7 +21,7 @@ export default function BottomNav() {
     null;
 
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-[60]">
       <div className="bg-white/95 backdrop-blur border-t border-neutral-200 px-4 pt-2 pb-3 shadow-[0_-6px_20px_rgba(0,0,0,0.04)]">
         <div className="grid grid-cols-4 items-end" data-testid="bottom-nav">
           {ITEMS.map((it) => {

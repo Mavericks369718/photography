@@ -46,7 +46,7 @@ export default function PhotographerProfile() {
 
   return (
     <div className="min-h-screen w-full bg-neutral-100 flex justify-center">
-      <div className="relative w-full max-w-[480px] min-h-screen bg-[#FFF1EC] flex flex-col pb-32">
+      <div className="relative w-full max-w-[480px] min-h-screen bg-[#FFF1EC] flex flex-col pb-40">
         {/* Editorial cinematic hero */}
         <div className="relative h-[58vh] min-h-[460px] w-full overflow-hidden">
           <img src={p.cover} alt={p.name} className="absolute inset-0 h-full w-full object-cover scale-[1.04]" data-testid="photographer-cover"/>
