@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin } from 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS = ["S","M","T","W","T","F","S"];
 const TIME_SLOTS = ["07:00 AM","09:00 AM","11:00 AM","01:00 PM","03:00 PM","05:00 PM","07:00 PM"];
-const PACKAGE = { id: "w2", name: "Candid & Traditional Combo", photographer: "Studio Moments by Raj", image: "https://images.unsplash.com/photo-1604017011826-d3b4c23f8914?w=800&q=80", basePrice: 65000, originalPrice: 85000, duration: "10 hrs", location: "On-location · Delhi NCR" };
+const DEFAULT_PACKAGE = { id: "w2", name: "Candid & Traditional Combo", photographer: "Studio Moments by Raj", image: "https://images.unsplash.com/photo-1604017011826-d3b4c23f8914?w=800&q=80", basePrice: 65000, originalPrice: 85000, duration: "10 hrs", location: "On-location · Delhi NCR" };
 const UNAVAILABLE_WEEKDAYS = [0]; // Sundays closed
 
 function StepBar({ step }) {
@@ -26,6 +26,26 @@ export default function Booking() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Read currently selected photographer + package (set from PhotographerProfile)
+  const PACKAGE = useMemo(() => {
+    try {
+      const sel = JSON.parse(localStorage.getItem("cm_selected") || "null");
+      if (sel?.package) {
+        return {
+          id: sel.package.id,
+          name: sel.package.name,
+          photographer: sel.package.photographer,
+          image: sel.package.image,
+          basePrice: sel.package.basePrice,
+          originalPrice: sel.package.originalPrice,
+          duration: sel.package.duration,
+          location: sel.package.location || "On-location"
+        };
+      }
+    } catch { /* ignore */ }
+    return DEFAULT_PACKAGE;
+  }, []);
 
   useEffect(() => { const t = setTimeout(()=>setLoading(false), 700); return ()=>clearTimeout(t); }, []);
 
@@ -57,7 +77,6 @@ export default function Booking() {
     localStorage.setItem("cm_booking", JSON.stringify(booking));
     navigate("/payment");
   };
-
   return (
     <div className="min-h-screen w-full bg-neutral-100 flex justify-center">
       <div className="relative w-full max-w-[480px] min-h-screen bg-[#FFF1EC] flex flex-col pb-28">
@@ -92,7 +111,7 @@ export default function Booking() {
             <p className="text-[11.5px] text-neutral-500 mt-0.5 truncate">{PACKAGE.photographer}</p>
             <div className="flex items-center gap-3 mt-1.5 text-[11px] text-neutral-500">
               <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3"/>{PACKAGE.duration}</span>
-              <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3"/>Delhi NCR</span>
+              <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3"/>{PACKAGE.location.replace(/^On-location · /, "")}</span>
             </div>
           </div>
         </div>

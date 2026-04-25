@@ -53,7 +53,14 @@ export default function Payment() {
       const ref = "CM" + Math.random().toString(36).slice(2,8).toUpperCase();
       const payload = { ...booking, ref, grandTotal, paymentMode: mode, paymentMethod: mode==="online"?method:null, paidAt: new Date().toISOString() };
       localStorage.setItem("cm_last_booking", JSON.stringify(payload));
+      // append to bookings history (used by /bookings page)
+      try {
+        const hist = JSON.parse(localStorage.getItem("cm_bookings_history") || "[]");
+        hist.push(payload);
+        localStorage.setItem("cm_bookings_history", JSON.stringify(hist));
+      } catch { /* ignore */ }
       localStorage.removeItem("cm_booking");
+      localStorage.removeItem("cm_selected");
       navigate("/confirmation");
     }, 1400);
   };

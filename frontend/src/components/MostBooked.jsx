@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { mostBookedTabs, mostBookedServices } from "../mock";
-import { Star, Clock, MapPin } from "lucide-react";
+import { mostBookedTabs, mostBookedServices, tabToCategory } from "../mock";
+import { Star, Clock, MapPin, ChevronRight } from "lucide-react";
 
 function ServiceCard({ s }) {
   const navigate = useNavigate();
   const discount = Math.round(((s.originalPrice - s.price) / s.originalPrice) * 100);
+  const openProfile = () => navigate(`/photographer/${s.photographerId}`);
   return (
-    <div className="min-w-[260px] max-w-[260px] snap-start rounded-2xl bg-white ring-1 ring-neutral-200 shadow-[0_4px_16px_rgba(0,0,0,0.04)] overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all">
+    <div
+      data-testid={`service-card-${s.id}`}
+      onClick={openProfile}
+      role="button"
+      className="cursor-pointer min-w-[260px] max-w-[260px] snap-start rounded-2xl bg-white ring-1 ring-neutral-200 shadow-[0_4px_16px_rgba(0,0,0,0.04)] overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all"
+    >
       <div className="relative h-36 w-full overflow-hidden bg-neutral-100">
         <img src={s.image} alt={s.title} className="h-full w-full object-cover" />
         <span className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-0.5 rounded-full text-[11px] font-semibold text-rose-700 ring-1 ring-rose-100">
@@ -37,9 +43,9 @@ function ServiceCard({ s }) {
               ₹{s.originalPrice.toLocaleString()}
             </span>
           </div>
-          <button onClick={() => navigate("/booking")} className="text-[12px] font-semibold text-rose-700 hover:text-rose-800">
-            Book →
-          </button>
+          <span className="text-[12px] font-semibold text-rose-700 inline-flex items-center">
+            View <ChevronRight className="h-3 w-3"/>
+          </span>
         </div>
       </div>
     </div>
@@ -63,9 +69,13 @@ export default function MostBooked() {
               <MapPin className="h-3 w-3" /> in your area
             </div>
           </div>
-          <span className="h-10 w-10 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center shadow-md ring-2 ring-white">
-            <MapPin className="h-4 w-4 text-white" />
-          </span>
+          <button
+            data-testid="most-booked-see-all-btn"
+            onClick={() => navigate(`/category/${tabToCategory[tab]}`)}
+            className="text-[12px] font-bold text-rose-700 hover:text-rose-800 inline-flex items-center gap-0.5"
+          >
+            See all <ChevronRight className="h-3.5 w-3.5"/>
+          </button>
         </div>
 
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3 -mx-1 px-1">
@@ -74,6 +84,7 @@ export default function MostBooked() {
             return (
               <button
                 key={t}
+                data-testid={`most-booked-tab-${t.split(" ")[0].toLowerCase()}-btn`}
                 onClick={() => setTab(t)}
                 className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-semibold transition-all ring-1 ${
                   selected

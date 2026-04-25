@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { categories } from "../mock";
 
 function Badge({ label }) {
@@ -14,8 +15,13 @@ function Badge({ label }) {
 }
 
 function CategoryCard({ cat }) {
+  const navigate = useNavigate();
   return (
-    <button className="group flex flex-col items-start text-left">
+    <button
+      data-testid={`category-${cat.id}-btn`}
+      onClick={() => navigate(`/category/${cat.id}`)}
+      className="group flex flex-col items-start text-left"
+    >
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-[#F8D7D9] ring-1 ring-black/5 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-0.5">
         <img
           src={cat.image}

@@ -1,56 +1,47 @@
 import React from "react";
-import { Home, Gift, Calendar, User, Aperture } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Home, Search, Calendar, User } from "lucide-react";
 
-const items = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "offers", label: "Offers", icon: Gift },
-  { id: "explore", label: "Explore", icon: Aperture, center: true },
-  { id: "bookings", label: "Bookings", icon: Calendar },
-  { id: "account", label: "Account", icon: User }
+const ITEMS = [
+  { id: "home",     label: "Home",     icon: Home,     path: "/" },
+  { id: "search",   label: "Search",   icon: Search,   path: "/search" },
+  { id: "bookings", label: "Bookings", icon: Calendar, path: "/bookings" },
+  { id: "account",  label: "Account",  icon: User,     path: "/account" }
 ];
 
-export default function BottomNav({ active, onChange }) {
+export default function BottomNav() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const activeId =
+    pathname === "/" ? "home" :
+    pathname.startsWith("/search") ? "search" :
+    pathname.startsWith("/bookings") ? "bookings" :
+    pathname.startsWith("/account") ? "account" :
+    null;
+
   return (
-    <div className="sticky bottom-0 left-0 right-0 z-30">
-      <div className="mx-auto max-w-[480px] bg-white/95 backdrop-blur border-t border-neutral-200 px-4 pt-2 pb-3">
-        <div className="grid grid-cols-5 items-end">
-          {items.map((it) => {
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40">
+      <div className="bg-white/95 backdrop-blur border-t border-neutral-200 px-4 pt-2 pb-3 shadow-[0_-6px_20px_rgba(0,0,0,0.04)]">
+        <div className="grid grid-cols-4 items-end" data-testid="bottom-nav">
+          {ITEMS.map((it) => {
             const Icon = it.icon;
-            const selected = active === it.id;
-            if (it.center) {
-              return (
-                <button
-                  key={it.id}
-                  onClick={() => onChange(it.id)}
-                  className="relative flex flex-col items-center -mt-7"
-                >
-                  <span className="h-14 w-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 shadow-lg ring-4 ring-white flex items-center justify-center">
-                    <Icon className="h-6 w-6 text-white" strokeWidth={2.2} />
-                  </span>
-                  <span className="mt-1 text-[11px] font-semibold text-neutral-800">
-                    {it.label}
-                  </span>
-                </button>
-              );
-            }
+            const selected = activeId === it.id;
             return (
               <button
                 key={it.id}
-                onClick={() => onChange(it.id)}
+                data-testid={`bottom-nav-${it.id}-btn`}
+                onClick={() => navigate(it.path)}
                 className="flex flex-col items-center py-1.5 group"
               >
                 <Icon
                   className={`h-5 w-5 transition-colors ${selected ? "text-rose-700" : "text-neutral-500 group-hover:text-neutral-700"}`}
                   strokeWidth={selected ? 2.4 : 2}
                 />
-                <span
-                  className={`mt-0.5 text-[11px] font-medium transition-colors ${selected ? "text-rose-700" : "text-neutral-500"}`}
-                >
+                <span className={`mt-0.5 text-[11px] font-semibold transition-colors ${selected ? "text-rose-700" : "text-neutral-500"}`}>
                   {it.label}
                 </span>
-                {selected && (
-                  <span className="mt-0.5 h-1 w-5 rounded-full bg-rose-700" />
-                )}
+                {selected && <span className="mt-0.5 h-1 w-5 rounded-full bg-rose-700"/>}
               </button>
             );
           })}

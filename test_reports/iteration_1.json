@@ -1,0 +1,42 @@
+{
+  "summary": "Frontend-only end-to-end testing of CorporateMoments P2 photographer profile/listing + bottom-nav + sitemap. Pre-populated cm_phone & cm_name (per request) and exercised: Home → category card → CategoryPhotographers → photographer card → PhotographerProfile (4 tabs) → Book package → Booking (date+slot+continue) → Payment (confirm) → Confirmation. Also tested MostBooked See-all, MostBooked service-card direct link, Search, MyBookings (empty + populated), Profile + logout, and BottomNav navigation across all 4 tabs. ALL functional flows PASS. Major issues are testability gaps (no data-testids on Booking & Payment pages) and one Emergent platform badge UI overlap on BottomNav.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "BottomNav (Home page)", "issue": "Emergent platform 'Made with Emergent' badge sits at z-50/fixed bottom-right and OVERLAPS the 'Bookings' tab hit-area (elementFromPoint at center of bottom-nav-bookings-btn returns the Emergent <a> link). Real user taps in that area open the badge instead of navigating to /bookings. Account tab is also partially obscured. Recommend raising BottomNav z-index or adding right padding to last 2 tabs so the badge sits over empty space.", "selector": "[data-testid='bottom-nav-bookings-btn']", "priority": "HIGH"},
+      {"component": "PhotographerProfile sticky CTA", "issue": "The fixed 'View packages' CTA bar (bottom-[68px]) overlays the LAST package's 'Book this' button when the page is not scrolled — clicking the visually-bottom Book button actually hits 'View packages'. Force-click works in tests but a real user must scroll. Consider giving Packages list bottom padding (pb-32) so all Book buttons are above the CTA.", "selector": "[data-testid^='book-package-']", "priority": "MEDIUM"},
+      {"component": "PhotographerProfile portfolio / photographer images", "issue": "Multiple console warnings: 'An empty string (\"\") was passed to the src attribute'. Some image srcs render before data is ready or are null in mock.", "selector": "img", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Booking.jsx", "issues": ["NO data-testids on calendar date buttons, time-slot buttons, or Continue button. Per problem statement these are part of the flow under test. Add data-testid='date-<YYYY-MM-DD>', 'slot-<HHMM>', 'booking-continue-btn'. Functional flow works (date 25 → 07:00 AM → Continue navigated to /payment, cm_booking written correctly)."]},
+      {"screen": "Payment.jsx", "issues": ["NO data-testids on mode (Pay Online / Pay Later), method (UPI/Card/etc), or the 'Confirm booking · ₹...' CTA. Add 'pay-mode-online-btn', 'pay-method-upi-btn', 'pay-confirm-btn'. Functional flow works (defaults online+upi valid, confirm wrote cm_last_booking + appended to cm_bookings_history and navigated to /confirmation)."]},
+      {"screen": "Confirmation.jsx", "issues": ["No data-testid on the success card / ref-code element. Recommend 'confirmation-ref' and 'confirmation-card'. Content itself is correct (BOOKING CONFIRMED, ref CMxxxxxx, Paid badge, ₹ amount)."]},
+      {"screen": "Login.jsx / Onboarding.jsx", "issues": ["Skipped per request (pre-populated localStorage). Quick scan shows no data-testids on phone-input, send-code-btn, otp boxes, verify-btn, name-input, onboarding-continue-btn — flagging because the request asked to test these flows."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Add data-testids to Booking.jsx (date buttons, slot buttons, continue button), Payment.jsx (mode/method/confirm), Confirmation.jsx, Login.jsx, Onboarding.jsx so the testing checklist items are programmatically verifiable.",
+    "Fix BottomNav vs 'Made with Emergent' badge overlap — the badge intercepts clicks on the Bookings tab. Either raise BottomNav z-index above the badge or shift the last two tabs slightly.",
+    "Increase bottom padding on PhotographerProfile Packages list (pb-32+) so the sticky 'View packages' CTA does not cover the last 'Book this' button.",
+    "Clean up empty src='' attributes (avoid <img src=''> when data not ready)."
+  ],
+  "critical_code_review_comments": [
+    "BottomNav z-40 vs Emergent badge: the platform-injected 'Made with Emergent' badge in the preview environment is fixed and z-index appears higher than BottomNav (z-40), causing real click interception on the Bookings tab. Bump BottomNav to z-50 or add right padding so badge doesn't overlap interactive area.",
+    "Booking.jsx & Payment.jsx are functionally correct but missing data-testids — they are part of the new 'sitemap' under test. This is a testability regression vs the rest of the app.",
+    "PhotographerProfile.jsx hides the bottom Book button under the sticky CTA. Add pb-32 to the Packages list container or detect last-card and add margin-bottom.",
+    "RequireAuth gate is correct: missing cm_phone → /login, missing cm_name → /onboarding. Verified by logout flow clearing localStorage and redirecting to /login."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only app)", "frontend": "100% functional flows pass; 2 UI/overlap issues + missing testids on Booking/Payment/Login/Onboarding"},
+  "test_credentials": "/app/memory/test_credentials.md not present (frontend-only app; auth is mocked via localStorage cm_phone='9876543210', cm_name='Aarav').",
+  "seed_data_creation": "Pre-populated localStorage: cm_phone='9876543210', cm_name='Aarav'. Created one full booking via the real UI flow: package=Classic Wedding Coverage (pg1-p1), date=25 Apr 2026, slot=07:00 AM, total=₹53,199, ref=CMxxxxxx (random per run).",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Frontend-only app at https://snap-reserve-10.preview.emergentagent.com. To skip auth gate set localStorage cm_phone='9876543210' & cm_name='Aarav'. Booking & Payment pages have NO data-testids — use button innerText matching ('Continue', /^\\d{1,2}$/ for date, /^\\d{1,2}:\\d{2}\\s*(AM|PM)$/ for slot, /Confirm booking/ for pay confirm). Use page.evaluate(()=>btn.click()) to bypass the 'Made with Emergent' overlay on bottom-nav-bookings-btn. Full flow verified: Home → category-wedding-btn → /category/wedding → photographer-card-pg1 → /photographer/pg1 → tab-packages-btn → book-package-pg1-p1-btn → /booking → date+slot+Continue → /payment → 'Confirm booking · ₹...' → /confirmation. cm_bookings_history populated, /bookings shows BookingCard, logout-btn clears localStorage to /login. Sort-low correctly returned ascending [7999,18000,35000,55000].",
+  "rca of the issue": "1) BottomNav Bookings tab click intercepted by 'Made with Emergent' platform badge (elementFromPoint returns the badge anchor) — root cause: badge has higher effective z-index than BottomNav z-40. Mitigation: bump BottomNav to z-50 or add padding-right so last 2 tabs don't sit under the badge. 2) Last 'Book this' button hidden under sticky CTA — root cause: PhotographerProfile uses fixed bottom CTA (bottom-[68px]) but Packages list has only pb-32 wrapper, the very last package card overlaps the CTA. Mitigation: increase pb on the Packages list container."
+}
