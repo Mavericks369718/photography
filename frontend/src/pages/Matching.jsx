@@ -20,8 +20,9 @@ export default function Matching() {
     const t1 = setTimeout(() => {
       setPro(picked);
       setPhase("found");
-      // persist assignment
-      const updated = { ...last, assignedPhotographer: { id: picked.id, name: picked.name, avatar: picked.avatar, city: picked.city, rating: picked.rating, reviews: picked.reviews } };
+      // persist assignment + propagate to package.photographer so MyBookings shows it
+      const updatedPackage = { ...last.package, photographer: picked.name };
+      const updated = { ...last, package: updatedPackage, assignedPhotographer: { id: picked.id, name: picked.name, avatar: picked.avatar, city: picked.city, rating: picked.rating, reviews: picked.reviews } };
       localStorage.setItem("cm_last_booking", JSON.stringify(updated));
       try {
         const hist = JSON.parse(localStorage.getItem("cm_bookings_history") || "[]");
