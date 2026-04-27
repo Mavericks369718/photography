@@ -8,9 +8,13 @@ export default function MyBookings() {
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    const arr = JSON.parse(localStorage.getItem("cm_bookings_history") || "[]");
-    // newest first
-    setList(arr.slice().reverse());
+    const read = () => {
+      const arr = JSON.parse(localStorage.getItem("cm_bookings_history") || "[]");
+      setList(arr.slice().reverse());
+    };
+    read();
+    window.addEventListener("cm-bookings-updated", read);
+    return () => window.removeEventListener("cm-bookings-updated", read);
   }, []);
 
   return (

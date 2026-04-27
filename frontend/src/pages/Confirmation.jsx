@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Calendar, Clock, Hash, Camera, Copy, Home as HomeIcon, Download, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { photographers } from "../mock";
 
 export default function Confirmation() {
   const navigate = useNavigate();
@@ -10,37 +9,20 @@ export default function Confirmation() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const raw = localStorage.getItem("cm_last_booking");
-    const t = setTimeout(() => { setData(raw ? JSON.parse(raw) : null); setLoading(false); }, 600);
-    return () => clearTimeout(t);
+    const read = () => {
+      const raw = localStorage.getItem("cm_last_booking");
+      setData(raw ? JSON.parse(raw) : null);
+    };
+    const t = setTimeout(() => { read(); setLoading(false); }, 600);
+    const onUpdate = () => {
+      read();
+      const raw = localStorage.getItem("cm_last_booking");
+      const updated = raw ? JSON.parse(raw) : null;
+      if (updated?.assignedPhotographer) toast.success("Photographer assigned!", { description: updated.assignedPhotographer.name });
+    };
+    window.addEventListener("cm-bookings-updated", onUpdate);
+    return () => { clearTimeout(t); window.removeEventListener("cm-bookings-updated", onUpdate); };
   }, []);
-
-  // Delayed photographer assignment: 8s after page loads (only if pending)
-  useEffect(() => {
-    if (!data || data.assignedPhotographer || !data.assignmentPending) return;
-    const t = setTimeout(() => {
-      const catId = data.categoryId;
-      const pool = photographers.filter((p) => p.verified && (!catId || p.categories.includes(catId)));
-      const picked = pool.length ? pool[Math.floor(Math.random() * pool.length)] : photographers[0];
-      const updatedPackage = { ...data.package, photographer: picked.name };
-      const updated = {
-        ...data,
-        package: updatedPackage,
-        assignmentPending: false,
-        assignedPhotographer: { id: picked.id, name: picked.name, avatar: picked.avatar, city: picked.city, rating: picked.rating, reviews: picked.reviews }
-      };
-      localStorage.setItem("cm_last_booking", JSON.stringify(updated));
-      try {
-        const hist = JSON.parse(localStorage.getItem("cm_bookings_history") || "[]");
-        const idx = hist.findIndex((b) => b.ref === updated.ref);
-        if (idx >= 0) hist[idx] = updated;
-        localStorage.setItem("cm_bookings_history", JSON.stringify(hist));
-      } catch { /* ignore */ }
-      setData(updated);
-      toast.success("Photographer assigned!", { description: picked.name });
-    }, 8000);
-    return () => clearTimeout(t);
-  }, [data]);
 
   if (loading) {
     return (
