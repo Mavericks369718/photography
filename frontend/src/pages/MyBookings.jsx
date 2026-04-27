@@ -62,6 +62,7 @@ export default function MyBookings() {
 function BookingCard({ b }) {
   const date = new Date(b.date).toLocaleDateString("en-IN", { weekday:"short", day:"2-digit", month:"short", year:"numeric" });
   const paid = b.paymentMode === "online";
+  const pending = b.assignmentPending && !b.assignedPhotographer;
   return (
     <div data-testid={`booking-${b.ref}`} className="rounded-3xl bg-[#FFF7F3] ring-1 ring-rose-100 overflow-hidden">
       <div className="p-4 flex gap-3 items-center">
@@ -70,7 +71,13 @@ function BookingCard({ b }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[13.5px] font-bold text-neutral-900 truncate">{b.package.name}</p>
-          <p className="text-[11.5px] text-neutral-500 mt-0.5 inline-flex items-center gap-1"><Camera className="h-3 w-3"/>{b.package.photographer}</p>
+          {pending ? (
+            <p className="text-[11.5px] font-bold text-amber-700 mt-0.5 inline-flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"/>Assigning a photographer…
+            </p>
+          ) : (
+            <p className="text-[11.5px] text-neutral-500 mt-0.5 inline-flex items-center gap-1"><Camera className="h-3 w-3"/>{b.package.photographer}</p>
+          )}
         </div>
         <span className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10.5px] font-bold tracking-wide ${paid?"bg-emerald-100 text-emerald-800":"bg-amber-100 text-amber-800"}`}>
           <span className={`h-1.5 w-1.5 rounded-full ${paid?"bg-emerald-600":"bg-amber-600"}`}/>

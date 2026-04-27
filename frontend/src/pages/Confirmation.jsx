@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Calendar, Clock, Hash, Camera, Copy, Home as HomeIcon, Download } from "lucide-react";
+import { Check, Calendar, Clock, Hash, Camera, Copy, Home as HomeIcon, Download, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { photographers } from "../mock";
 
 export default function Confirmation() {
   const navigate = useNavigate();
@@ -13,6 +14,33 @@ export default function Confirmation() {
     const t = setTimeout(() => { setData(raw ? JSON.parse(raw) : null); setLoading(false); }, 600);
     return () => clearTimeout(t);
   }, []);
+
+  // Delayed photographer assignment: 8s after page loads (only if pending)
+  useEffect(() => {
+    if (!data || data.assignedPhotographer || !data.assignmentPending) return;
+    const t = setTimeout(() => {
+      const catId = data.categoryId;
+      const pool = photographers.filter((p) => p.verified && (!catId || p.categories.includes(catId)));
+      const picked = pool.length ? pool[Math.floor(Math.random() * pool.length)] : photographers[0];
+      const updatedPackage = { ...data.package, photographer: picked.name };
+      const updated = {
+        ...data,
+        package: updatedPackage,
+        assignmentPending: false,
+        assignedPhotographer: { id: picked.id, name: picked.name, avatar: picked.avatar, city: picked.city, rating: picked.rating, reviews: picked.reviews }
+      };
+      localStorage.setItem("cm_last_booking", JSON.stringify(updated));
+      try {
+        const hist = JSON.parse(localStorage.getItem("cm_bookings_history") || "[]");
+        const idx = hist.findIndex((b) => b.ref === updated.ref);
+        if (idx >= 0) hist[idx] = updated;
+        localStorage.setItem("cm_bookings_history", JSON.stringify(hist));
+      } catch { /* ignore */ }
+      setData(updated);
+      toast.success("Photographer assigned!", { description: picked.name });
+    }, 8000);
+    return () => clearTimeout(t);
+  }, [data]);
 
   if (loading) {
     return (
@@ -75,6 +103,20 @@ export default function Confirmation() {
           <p className="text-center text-[13px] text-neutral-500 leading-relaxed mb-5">
             A confirmation has been sent to your mobile.<br/>We&rsquo;ll reach out 24 hrs before the shoot.
           </p>
+
+          {data.assignmentPending && !data.assignedPhotographer && (
+            <div data-testid="assignment-pending-card" className="mb-5 rounded-3xl bg-gradient-to-br from-amber-50 via-white to-rose-50 ring-1 ring-amber-200 p-4 flex items-center gap-3">
+              <span className="relative h-12 w-12 rounded-full bg-white ring-1 ring-amber-200 flex items-center justify-center shrink-0">
+                <span className="absolute inset-0 rounded-full bg-amber-400/30 animate-ping"/>
+                <Sparkles className="relative h-5 w-5 text-amber-600" strokeWidth={2.4}/>
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10.5px] font-bold tracking-[0.2em] uppercase text-amber-700">Assigning a photographer</p>
+                <p className="text-[13.5px] font-extrabold text-neutral-900 leading-snug">Finding the best pro near you…</p>
+                <p className="text-[11.5px] text-neutral-500 mt-0.5">Usually takes a few minutes. Check My Bookings.</p>
+              </div>
+            </div>
+          )}
 
           {data.assignedPhotographer && (
             <div data-testid="assigned-photographer-card" className="mb-5 rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-rose-50 ring-1 ring-emerald-100 p-4 flex items-center gap-3">

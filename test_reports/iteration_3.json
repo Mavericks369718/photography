@@ -1,0 +1,32 @@
+{
+  "summary": "Frontend-only e2e testing of CorporateMoments instant-book redesign (4 user-requested changes). All 19 primary checks + 5 backwards-compat / MyBookings checks passed. No console errors observed across all flows.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Delayed photographer assignment",
+        "issue": "The 8s assignment setTimeout is registered inside Confirmation.jsx useEffect with cleanup. If user navigates AWAY from /confirmation before 8s elapses (e.g., taps 'Back to home' or opens /bookings via bottom nav), the timer is cleared and assignment never completes — booking stays permanently in pending state in cm_last_booking and cm_bookings_history. Verified: navigated to /bookings after 1.5s on confirmation, waited a further 9.5s, cm_last_booking.assignmentPending remained true and assignedPhotographer remained null. Recommend moving the assignment scheduler to a top-level effect (App.js or a context) so it survives navigation, OR persisting an 'assignAt' timestamp and running a global watcher.",
+        "affected_selectors": ["assignment-pending-card", "assigned-photographer-card"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "(Optional but recommended) Move the 8s photographer-assignment setTimeout out of Confirmation.jsx into a global location (App.js useEffect or a small context/provider) so navigation away from /confirmation does NOT cancel the assignment. Otherwise pending bookings can stay stuck forever if the user leaves the confirmation page within 8s."
+  ],
+  "critical_code_review_comments": [
+    "Confirmation.jsx assignment timer is tied to component lifecycle — cleanup function clears the timeout on unmount, leaving cm_last_booking.assignmentPending=true forever if user leaves before 8s. Consider lifting it to App level.",
+    "InstantBook.jsx end-time computation uses TIME_SLOTS[idx + 1] which works correctly for current slot list (each slot is 2hrs apart) but is fragile — if slot grid is ever made non-uniform this breaks. Minor: a small util `addHours(slot, 2)` is more robust.",
+    "Photographer pool in Confirmation.jsx falls back to photographers[0] when category-filtered pool is empty — silently could assign mismatched specialty. Acceptable for MVP."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "n/a", "frontend": "100% (24/24 checks)" },
+  "test_credentials": "n/a — auth not required; localStorage cm_phone/cm_name pre-populated as instructed",
+  "seed_data_creation": "Pre-populated localStorage cm_phone='9876543210' and cm_name='Aarav' before each test run. Created an old-flow booking via localStorage seed (no assignmentPending field) to verify backwards-compat.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 4 user-requested changes are implemented correctly: (1) date+time merged into Step 1 of 3, (2) multi-select time slots with sortSlots ordering and toggle/deselect working, (3) bottom CTA hides ₹ price on Steps 1 & 2 and shows '...Final price shown after service selection' until ib-service-*-btn clicked on Step 3, (4) Payment now goes directly to /confirmation (not /matching), Confirmation shows assignment-pending-card initially then swaps to assigned-photographer-card after 8s with toast. Backwards-compat verified — old-flow booking (no assignmentPending) shows photographer name normally with NO pending card and never auto-reassigns. Multi-select cm_booking persists duration='6 hrs · 3 slots' and time='09:00 AM – 03:00 PM' correctly. cm_instant_flow is cleared on payment confirm. /bookings page shows 'Assigning a photographer…' pulsing-amber-dot badge during pending, then assigned name afterwards. NO console errors anywhere. ONLY remaining concern: timer is cancelled if user navigates away from /confirmation within 8s — see action_items.",
+  "rca of the issue": "n/a — implementation matches the spec; the navigation-away edge case is by-design per the spec but flagged as potential UX issue."
+}
