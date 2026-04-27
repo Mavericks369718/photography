@@ -76,6 +76,17 @@ export default function Confirmation() {
             A confirmation has been sent to your mobile.<br/>We&rsquo;ll reach out 24 hrs before the shoot.
           </p>
 
+          {data.assignedPhotographer && (
+            <div data-testid="assigned-photographer-card" className="mb-5 rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-rose-50 ring-1 ring-emerald-100 p-4 flex items-center gap-3">
+              <img src={data.assignedPhotographer.avatar} alt={data.assignedPhotographer.name} className="h-14 w-14 rounded-full object-cover ring-2 ring-white shadow"/>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10.5px] font-bold tracking-[0.2em] uppercase text-emerald-700">Your photographer</p>
+                <p className="text-[14px] font-extrabold text-neutral-900 truncate">{data.assignedPhotographer.name}</p>
+                <p className="text-[11.5px] text-neutral-500 mt-0.5">⭐ {data.assignedPhotographer.rating} · {data.assignedPhotographer.city}</p>
+              </div>
+            </div>
+          )}
+
         {/* Ticket card */}
         <div className="rounded-3xl bg-[#FFF7F3] ring-1 ring-rose-100 overflow-hidden">
           {/* perforated notches */}

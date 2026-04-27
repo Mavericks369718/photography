@@ -6,7 +6,7 @@ import { Star, Clock, MapPin, ChevronRight } from "lucide-react";
 function ServiceCard({ s }) {
   const navigate = useNavigate();
   const discount = Math.round(((s.originalPrice - s.price) / s.originalPrice) * 100);
-  const openProfile = () => navigate(`/photographer/${s.photographerId}`);
+  const openProfile = () => navigate(`/book/${tabToCategory[Object.keys(mostBookedServices).find(k => mostBookedServices[k].some((it)=>it.id===s.id))] || "wedding"}`);
   return (
     <div
       data-testid={`service-card-${s.id}`}

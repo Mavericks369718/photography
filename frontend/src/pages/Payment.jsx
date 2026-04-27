@@ -61,7 +61,8 @@ export default function Payment() {
       } catch { /* ignore */ }
       localStorage.removeItem("cm_booking");
       localStorage.removeItem("cm_selected");
-      navigate("/confirmation");
+      const isInstant = localStorage.getItem("cm_instant_flow") === "1";
+      navigate(isInstant ? "/matching" : "/confirmation");
     }, 1400);
   };
 

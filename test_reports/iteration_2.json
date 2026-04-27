@@ -1,0 +1,33 @@
+{
+  "summary": "Frontend-only tested the new Uber/Swiggy-style InstantBook flow end-to-end on mobile viewport (390x844). All 4 steps work (Date→Time→Location→Service), pricing math is correct (Photo=₹65k / Video=₹91k / Both=₹117k for wedding), Payment writes correct cm_booking + cm_instant_flow, /matching shows scanning → found states with real photographer (Kalpa Films) and auto-navigates to /confirmation after ~5s, assigned-photographer-card renders, cm_instant_flow cleared, non-instant flow still skips /matching, backwards-compat routes (/photographer/pg1, /category/wedding) still load, Home category card + MostBooked card both navigate to /book/wedding, BottomNav works. One minor gap: MyBookings photographer label for instant bookings still shows 'Auto-assigned · Best pro nearby' instead of the matched pro's name.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "MyBookings list after instant match",
+        "issue": "The photographer name shown in MyBookings card for an instant-flow booking is still 'Auto-assigned · Best pro nearby' — Matching.jsx persists assignedPhotographer onto cm_last_booking/history but never updates booking.package.photographer, which is the field MyBookings.jsx renders at line 73. Requirement explicitly asks MyBookings to show the auto-assigned photographer name.",
+        "affected_selectors": ["MyBookings card photographer label (b.package.photographer)"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "In /app/frontend/src/pages/Matching.jsx, when persisting `updated`, also overwrite `updated.package.photographer = picked.name` (and optionally picked.avatar/city) so MyBookings shows the matched pro's real name for instant bookings."
+  ],
+  "critical_code_review_comments": [
+    "Matching.jsx only patches top-level assignedPhotographer but leaves stale package.photographer='Auto-assigned · Best pro nearby' — MyBookings reads that field, creating inconsistency between Confirmation (shows real name via assigned-photographer-card) and Bookings list (shows placeholder).",
+    "InstantBook.jsx: date selectability is gated by UNAVAILABLE_WEEKDAYS=[0] (Sundays) — test found only 4 enabled days in current month view which is fine but worth documenting; also `date < today` comparison uses a freshly-constructed today each render which is correct.",
+    "Matching.jsx navigates home if no cm_last_booking exists, but the instant flow writes cm_last_booking only AFTER Payment.confirm's 1.4s timeout — so if user lands on /matching via a hard refresh before payment, they correctly bounce home. OK.",
+    "Payment.jsx does not clear cm_instant_flow if user bails to confirmation manually; only Matching.jsx clears it. Low risk but worth noting."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "~95% (1 minor integration miss)"},
+  "test_credentials": "Seeded via localStorage: cm_phone=9876543210, cm_name=Aarav (per review_request). No real auth backend used.",
+  "seed_data_creation": "Only localStorage seed for RequireAuth gate.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Full instant flow verified working on mobile viewport (390x844). Matching page animation lasts ~4.8s total. Only residual issue: package.photographer field not updated post-match — see action_items.",
+  "rca of the issue": "MyBookings stale photographer label RCA: Matching.jsx at L22-24 constructs `updated = { ...last, assignedPhotographer: {...} }` — this spreads last unchanged, so last.package.photographer (set by InstantBook.jsx to 'Auto-assigned · Best pro nearby') remains. MyBookings.jsx L73 renders b.package.photographer. Fix: `updated.package = { ...last.package, photographer: picked.name }`. Reproduction: complete instant flow → navigate to /bookings → observe photographer text."
+}

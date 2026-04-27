@@ -19,7 +19,7 @@ function CategoryCard({ cat }) {
   return (
     <button
       data-testid={`category-${cat.id}-btn`}
-      onClick={() => navigate(`/category/${cat.id}`)}
+      onClick={() => navigate(`/book/${cat.id}`)}
       className="group flex flex-col items-start text-left"
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-[#F8D7D9] ring-1 ring-black/5 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-0.5">

@@ -12,6 +12,8 @@ import PhotographerProfile from "./pages/PhotographerProfile";
 import MyBookings from "./pages/MyBookings";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
+import InstantBook from "./pages/InstantBook";
+import Matching from "./pages/Matching";
 import { Toaster } from "sonner";
 
 function RequireAuth({ children }) {
@@ -30,6 +32,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+          <Route path="/book/:categoryId" element={<RequireAuth><InstantBook /></RequireAuth>} />
+          <Route path="/matching" element={<RequireAuth><Matching /></RequireAuth>} />
           <Route path="/category/:categoryId" element={<RequireAuth><CategoryPhotographers /></RequireAuth>} />
           <Route path="/photographer/:photographerId" element={<RequireAuth><PhotographerProfile /></RequireAuth>} />
           <Route path="/search" element={<RequireAuth><Search /></RequireAuth>} />
