@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin, Crosshair, Search, Camera, Video, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin, Crosshair, Search, Camera, Video, Sparkles, BookImage, CheckCircle2 } from "lucide-react";
 import { categoryTitle, categories } from "../mock";
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -22,9 +22,10 @@ const CATEGORY_META = {
 };
 
 const SERVICE_TYPES = [
-  { id: "photo", label: "Photography",   desc: "Stills only · Edited gallery", multiplier: 1.0, Icon: Camera   },
-  { id: "video", label: "Videography",   desc: "Cinematic film · Reels",       multiplier: 1.4, Icon: Video    },
-  { id: "both",  label: "Photo + Video", desc: "Full crew · Best value",       multiplier: 1.8, Icon: Sparkles }
+  { id: "photo",       label: "Photography",            desc: "Stills only · Edited gallery",        multiplier: 1.0, Icon: Camera    },
+  { id: "video",       label: "Videography",            desc: "Cinematic film · Reels",              multiplier: 1.4, Icon: Video     },
+  { id: "both",        label: "Photo + Video",          desc: "Full crew · Best value",              multiplier: 1.8, Icon: Sparkles  },
+  { id: "both_album",  label: "Photo + Video + Album",  desc: "Premium hardcover album included",    multiplier: 2.2, Icon: BookImage }
 ];
 
 const RECENT_ADDRESSES = [
