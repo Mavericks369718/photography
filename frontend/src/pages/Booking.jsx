@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin, BookImage, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin } from "lucide-react";
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS = ["S","M","T","W","T","F","S"];
 const TIME_SLOTS = ["07:00 AM","09:00 AM","11:00 AM","01:00 PM","03:00 PM","05:00 PM","07:00 PM"];
 const DEFAULT_PACKAGE = { id: "w2", name: "Candid & Traditional Combo", photographer: "Studio Moments by Raj", image: "https://images.unsplash.com/photo-1604017011826-d3b4c23f8914?w=800&q=80", basePrice: 65000, originalPrice: 85000, duration: "10 hrs", location: "On-location · Delhi NCR" };
-const ALBUM_PRICE = 15000;
 const UNAVAILABLE_WEEKDAYS = [0]; // Sundays closed
 
 function StepBar({ step }) {
@@ -26,7 +25,6 @@ export default function Booking() {
   const [month, setMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [addAlbum, setAddAlbum] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Read currently selected photographer + package (set from PhotographerProfile)
@@ -65,21 +63,16 @@ export default function Booking() {
   const isSameDay = (a,b) => a && b && a.toDateString() === b.toDateString();
 
   const canProceed = selectedDate && selectedTime;
-  const runningTotal = PACKAGE.basePrice + (addAlbum ? ALBUM_PRICE : 0);
+  const runningTotal = PACKAGE.basePrice;
   const savings = PACKAGE.originalPrice - PACKAGE.basePrice;
 
   const proceed = () => {
     if (!canProceed) return;
     const booking = {
-      package: {
-        ...PACKAGE,
-        name: addAlbum ? `${PACKAGE.name} + Album` : PACKAGE.name,
-        basePrice: runningTotal
-      },
+      package: PACKAGE,
       date: selectedDate.toISOString(),
       time: selectedTime,
       total: runningTotal,
-      addAlbum,
     };
     localStorage.setItem("cm_booking", JSON.stringify(booking));
     navigate("/payment");
@@ -185,32 +178,6 @@ export default function Booking() {
             );
           })}
         </div>
-
-        {/* Album add-on */}
-        <div className="pt-7 pb-3">
-          <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-rose-700">Add-ons</p>
-          <h2 className="mt-1 text-[18px] font-extrabold text-neutral-900 tracking-[-0.015em]">Make it unforgettable</h2>
-        </div>
-        <button
-          data-testid="booking-album-toggle"
-          onClick={()=>setAddAlbum(v=>!v)}
-          className={`relative w-full text-left rounded-2xl p-4 ring-1 transition flex items-center gap-3 ${addAlbum?"bg-rose-50 ring-rose-700 ring-2":"bg-white ring-neutral-200 hover:ring-rose-200"}`}
-        >
-          <span className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${addAlbum?"bg-rose-700 text-white":"bg-rose-50 text-rose-700"}`}>
-            <BookImage className="h-5 w-5" strokeWidth={2.2}/>
-          </span>
-          <div className="flex-1 min-w-0">
-            <p className="text-[14.5px] font-extrabold text-neutral-900 leading-tight">Premium hardcover album</p>
-            <p className="text-[11.5px] text-neutral-500 mt-0.5">30 curated pages · gift-boxed · ships in 3 weeks</p>
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-[10.5px] uppercase tracking-[0.16em] font-bold text-neutral-400">Add</p>
-            <p className="text-[15px] font-extrabold text-neutral-900">+₹{ALBUM_PRICE.toLocaleString()}</p>
-          </div>
-          <span className={`absolute right-4 top-4 h-5 w-5 rounded-full ring-1 flex items-center justify-center transition ${addAlbum?"bg-rose-700 ring-rose-700 text-white":"ring-neutral-300 bg-white"}`}>
-            {addAlbum && <Check className="h-3.5 w-3.5" strokeWidth={3}/>}
-          </span>
-        </button>
         </div>
 
         {/* Sticky running cost */}

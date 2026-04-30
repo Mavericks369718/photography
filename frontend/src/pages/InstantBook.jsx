@@ -22,10 +22,9 @@ const CATEGORY_META = {
 };
 
 const SERVICE_TYPES = [
-  { id: "photo",       label: "Photography",            desc: "Stills only · Edited gallery",        multiplier: 1.0, Icon: Camera    },
-  { id: "video",       label: "Videography",            desc: "Cinematic film · Reels",              multiplier: 1.4, Icon: Video     },
-  { id: "both",        label: "Photo + Video",          desc: "Full crew · Best value",              multiplier: 1.8, Icon: Sparkles  },
-  { id: "both_album",  label: "Photo + Video + Album",  desc: "Premium hardcover album included",    multiplier: 2.2, Icon: BookImage }
+  { id: "photography",  label: "Photography",     desc: "Stills only · Edited gallery",        kind: "multiplier", multiplier: 1.0,   Icon: Camera    },
+  { id: "videography",  label: "Videography",     desc: "Cinematic film · Reels",              kind: "multiplier", multiplier: 0.8,   Icon: Video     },
+  { id: "album",        label: "Premium Album",   desc: "30 curated pages · gift-boxed",       kind: "flat",       flatPrice: 15000,  Icon: BookImage }
 ];
 
 const RECENT_ADDRESSES = [
@@ -52,7 +51,7 @@ export default function InstantBook() {
   const [times, setTimes] = useState([]); // multi-select
   const [address, setAddress] = useState("");
   const [pinLabel, setPinLabel] = useState("");
-  const [service, setService] = useState(null); // null until picked
+  const [service, setService] = useState([]); // multi-select array of ids
 
   const { cells, monthLabel } = useMemo(() => {
     const y = month.getFullYear(), m = month.getMonth();
@@ -71,14 +70,19 @@ export default function InstantBook() {
     setTimes((prev) => prev.includes(t) ? prev.filter(x => x !== t) : sortSlots([...prev, t]));
   };
 
-  const svc = SERVICE_TYPES.find((s) => s.id === service);
-  const total = svc ? Math.round(meta.base * svc.multiplier) : null;
+  const toggleService = (id) => setService((prev) => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+
+  const selectedSvcs = SERVICE_TYPES.filter((s) => service.includes(s.id));
+  const total = selectedSvcs.length
+    ? selectedSvcs.reduce((sum, s) => sum + (s.kind === "flat" ? s.flatPrice : Math.round(meta.base * s.multiplier)), 0)
+    : null;
   const original = total ? Math.round(total * 1.25) : null;
+  const serviceLabel = selectedSvcs.map((s) => s.label).join(" + ") || "";
 
   const canNext =
     (step === 1 && date && times.length > 0) ||
     (step === 2 && address.trim().length > 5) ||
-    (step === 3 && !!service);
+    (step === 3 && service.length > 0);
 
   const next = () => {
     if (step < 3) { setStep(step + 1); return; }
@@ -93,8 +97,8 @@ export default function InstantBook() {
 
     const booking = {
       package: {
-        id: `${categoryId}-${service}`,
-        name: `${title} — ${svc.label}`,
+        id: `${categoryId}-${service.join("-")}`,
+        name: `${title} — ${serviceLabel}`,
         photographer: "Auto-assigned · Best pro nearby",
         image: heroImg,
         basePrice: total,
@@ -107,7 +111,7 @@ export default function InstantBook() {
       times,
       total,
       categoryId,
-      service: svc.id,
+      services: service,
       address,
       assignmentPending: true
     };
@@ -253,23 +257,27 @@ export default function InstantBook() {
 
           {step === 3 && (
             <div data-testid="ib-step-service">
+              <p className="text-[11.5px] text-neutral-500 mb-3">Pick one or more — combine to build your package.</p>
               <div className="space-y-2.5">
                 {SERVICE_TYPES.map((s) => {
-                  const sel = service === s.id;
-                  const price = Math.round(meta.base * s.multiplier);
+                  const sel = service.includes(s.id);
+                  const price = s.kind === "flat" ? s.flatPrice : Math.round(meta.base * s.multiplier);
                   const Icon = s.Icon;
                   return (
-                    <button key={s.id} data-testid={`ib-service-${s.id}-btn`} onClick={()=>setService(s.id)}
-                      className={`w-full text-left rounded-2xl p-4 ring-1 transition flex items-center gap-3 ${sel?"bg-rose-50 ring-rose-700 ring-2":"bg-white ring-neutral-200 hover:ring-rose-200"}`}>
+                    <button key={s.id} data-testid={`ib-service-${s.id}-btn`} onClick={()=>toggleService(s.id)}
+                      className={`relative w-full text-left rounded-2xl p-4 ring-1 transition flex items-center gap-3 ${sel?"bg-rose-50 ring-rose-700 ring-2":"bg-white ring-neutral-200 hover:ring-rose-200"}`}>
                       <span className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${sel?"bg-rose-700 text-white":"bg-rose-50 text-rose-700"}`}><Icon className="h-5 w-5" strokeWidth={2.2}/></span>
                       <div className="flex-1 min-w-0">
                         <p className="text-[14.5px] font-extrabold text-neutral-900 leading-tight">{s.label}</p>
                         <p className="text-[11.5px] text-neutral-500 mt-0.5">{s.desc}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-[10.5px] uppercase tracking-[0.16em] font-bold text-neutral-400">From</p>
-                        <p className="text-[15px] font-extrabold text-neutral-900">₹{price.toLocaleString()}</p>
+                        <p className="text-[10.5px] uppercase tracking-[0.16em] font-bold text-neutral-400">{s.kind === "flat" ? "Flat" : "From"}</p>
+                        <p className="text-[15px] font-extrabold text-neutral-900">{s.kind === "flat" ? "+" : ""}₹{price.toLocaleString()}</p>
                       </div>
+                      <span className={`absolute top-3 right-3 h-5 w-5 rounded-full ring-1 flex items-center justify-center transition ${sel?"bg-rose-700 ring-rose-700 text-white":"ring-neutral-300 bg-white"}`}>
+                        {sel && <CheckCircle2 className="h-4 w-4"/>}
+                      </span>
                     </button>
                   );
                 })}
@@ -283,13 +291,13 @@ export default function InstantBook() {
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/95 backdrop-blur border-t border-neutral-200 px-5 py-3.5 z-40">
           <div className="flex items-center justify-between gap-3">
             <div>
-              {service && total ? (
+              {service.length > 0 && total ? (
                 <>
                   <div className="flex items-baseline gap-2">
                     <span className="text-[20px] font-extrabold text-neutral-900">₹{total.toLocaleString()}</span>
                     <span className="text-[12px] text-neutral-400 line-through">₹{original.toLocaleString()}</span>
                   </div>
-                  <span className="text-[11px] font-semibold text-emerald-700">{times.length || 1}× slot · {svc.label}</span>
+                  <span className="text-[11px] font-semibold text-emerald-700">{times.length || 1}× slot · {serviceLabel}</span>
                 </>
               ) : (
                 <>
